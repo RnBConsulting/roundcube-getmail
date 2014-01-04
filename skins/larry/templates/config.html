@@ -1,0 +1,24 @@
+<roundcube:object name="doctype" value="html5" />
+<html>
+<head>
+<title><roundcube:object name="pagetitle" /></title>
+<roundcube:include file="/includes/links.html" />
+</head>
+<body class="iframe floatingbuttons">
+
+<h1 class="boxtitle"><roundcube:label name="getmail.configform"></h1>
+
+<div id="preferences-details" class="boxcontent">
+	<form action="#" method="post" id="configform" class="propform">
+        <roundcube:object name="plugin.configform" form="configform" class="propform" />
+	</form>
+</div>
+
+<div class="footerleft formbuttons floating">
+	<roundcube:button type="input" class="button mainaction" command="plugin.save-config" label="save" />
+</div>
+
+<roundcube:include file="/includes/footer.html" />
+
+</body>
+</html>

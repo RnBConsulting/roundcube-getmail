@@ -1,0 +1,22 @@
+/* Stylesheets for the Getmail plugin UI */
+
+#sectionslist {
+    width: 220px;
+}
+
+#prefs-box {
+    position: absolute;
+    top: 0;
+    left: 232px;
+    right: 0;
+    bottom: 0;
+}
+
+#getmail-frame {
+    border-radius: 3px;
+}
+
+#account-list {
+    width: 100%;
+    table-layout: fixed;
+}
