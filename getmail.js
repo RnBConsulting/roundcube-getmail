@@ -20,48 +20,40 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function getmail_config()
+var getmail_config =
 {
     /* private members */
-    var http_lock = null,
-        active_config = null;
+    http_lock: null,
+    active_config: null,
+    configlist: null,
 
-    rcmail.register_command('plugin.delete-config', delete_config);
-    rcmail.register_command('plugin.save-config', save_config);
+    init: function() {
 
-    // TODO: Do this only if a config was chosen.
-    rcmail.enable_command('plugin.delete-config', true);
-    rcmail.enable_command('plugin.save-config', true);
+        rcmail.register_command('plugin.delete-config', $.proxy(this.delete_config, parent.getmail_config));
+        rcmail.register_command('plugin.save-config', $.proxy(this.save_config, parent.getmail_config));
+        rcmail.register_command('plugin.add-config', $.proxy(this.add_config, parent.getmail_config));
 
-    rcmail.register_command('plugin.add-config', add_config);
-    rcmail.enable_command('plugin.add-config', true);
+        // TODO: Do this only if a config was chosen.
+        rcmail.enable_command('plugin.delete-config', true);
+        rcmail.enable_command('plugin.save-config', true);
+        rcmail.enable_command('plugin.add-config', true);
 
-    rcmail.addEventListener('plugin.save-config-complete', save_complete);
-    rcmail.addEventListener('plugin.delete-config-complete', delete_complete);
+        if (rcmail.gui_objects.configlist) {
 
-    if (rcmail.gui_objects.configlist) {
-        var configlist = new rcube_list_widget(rcmail.gui_objects.configlist,
-            { multiselect:true, draggable:false, keyboard:true });
-        configlist.addEventListener('select', select_config);
-        configlist.init();
+            this.configlist = new rcube_list_widget(rcmail.gui_objects.configlist, { multiselect:true, draggable:false, keyboard:true });
+            this.configlist.addEventListener('select', $.proxy(function(list)
+            {
+                this.active_config = list.get_single_selection();
 
-        // Load frame if there are no devices
-        if (!rcmail.env.configcount)
-            config_select();
-    }
+                if (this.active_config)
+                    this.select_config(this.active_config);
 
-    /* private methods */
-    function select_config(list)
-    {
-        active_config = list.get_single_selection();
+            }, this));
+            this.configlist.init();
+        }
+    },
 
-        if (active_config)
-            config_select(active_config);
-        else if (rcmail.env.contentframe)
-            rcmail.show_contentframe(false);
-    };
-
-    function config_select(id)
+    select_config: function(id)
     {
         var win, target = window, url = '&_action=plugin.getmail-config';
 
@@ -75,10 +67,10 @@ function getmail_config()
         }
 
         rcmail.location_href(rcmail.env.comm_path + url, target, true);
-    };
+    },
 
     // Submit current configuration form to server
-    function save_config()
+    save_config: function()
     {
         var data = {
             cmd: 'save',
@@ -86,55 +78,56 @@ function getmail_config()
             data: $('#configform').serialize()
         };
 
-        http_lock = rcmail.set_busy(true, 'getmail.savingdata');
-        rcmail.http_post('plugin.getmail-json', data, http_lock);
-    };
+        rcmail.addEventListener('plugin.save-config-complete', $.proxy(function(p) {
 
-    // Callback function after saving a config
-    function save_complete(p)
-    {
-console.log("save_complete:");
-console.log(p);
+            if(p.new){
+                this.configlist.insert_row({ id:'rcmrow' + p.id, cols:[ { className:'configname', innerHTML: p.name } ] });
+                this.configlist.select(p.id);
+            }
+            else {
+                this.configlist.update_row(p.id, [ p.name ]);
+            }
 
-        // TODO: Insert a new row using configlist. Page reloading seems not to be "common".
-    }
+        }, this));
+
+        this.http_lock = rcmail.set_busy(true, 'getmail.savingdata');
+        rcmail.http_post('plugin.getmail-json', data, this.http_lock);
+    },
 
     // Handler for delete Getmail config
-    function delete_config()
+    delete_config: function()
     {
-        if (active_config && confirm(rcmail.gettext('configdeleteconfirm', 'getmail'))) {
-            http_lock = rcmail.set_busy(true, 'getmail.savingdata');
-            rcmail.http_post('plugin.getmail-json', { cmd:'delete', id:active_config }, http_lock);
-        }
-    };
+        if (this.active_config && confirm(rcmail.gettext('configdeleteconfirm', 'getmail'))) {
 
-    // Callback function after deleting a config
-    function delete_complete(p)
-    {
-console.log("delete_complete:");
-console.log(p);
-        active_config = null;
-        configlist.remove_row(p.id);
-        config_select();
-    };
+            rcmail.addEventListener('plugin.delete-config-complete', $.proxy(function(p) {
+                this.active_config = null;
+                this.configlist.remove_row(p.id);
+                this.select_config();
+            }, this));
+
+            this.http_lock = rcmail.set_busy(true, 'getmail.savingdata');
+            rcmail.http_post('plugin.getmail-json', { cmd:'delete', id:this.active_config }, this.http_lock);
+        }
+    },
 
     // Show blank config form for creating new Getmail configs
-    function add_config()
+    add_config: function()
     {
-        active_config = null;
-        config_select();
+        this.active_config = null;
+        this.select_config();
     }
 };
 
-window.rcmail && rcmail.addEventListener('init', function(evt) {
+window.rcmail && rcmail.addEventListener('init', function (evt) {
 
-  // Add button to tabs list
-  var tab = $('<span>').attr('id', 'settingstabplugingetmail').addClass('tablink'),
-    button = $('<a>').attr('href', rcmail.env.comm_path+'&_action=plugin.getmail')
-      .html(rcmail.gettext('tabtitle', 'getmail'))
-      .appendTo(tab);
-  rcmail.add_element(tab, 'tabs');
+    // Add button to tabs list
+    var tab = $('<span>').attr('id', 'settingstabplugingetmail').addClass('tablink'),
+        button = $('<a>').attr('href', rcmail.env.comm_path + '&_action=plugin.getmail')
+            .html(rcmail.gettext('tabtitle', 'getmail'))
+            .appendTo(tab);
+    rcmail.add_element(tab, 'tabs');
 
-  if (/^plugin.getmail/.test(rcmail.env.action))
-    getmail_obj = new getmail_config();
+    if (/^plugin.getmail/.test(rcmail.env.action)) {
+        getmail_config.init();
+    }
 });

@@ -115,11 +115,12 @@ class getmail extends rcube_plugin
                 $data = $this->_unserialize(get_input_value('data', RCUBE_INPUT_GPC));
 
                 // Create or edit.
+                $new = ($config == null);
                 $config = ($config ? $data + $config : $data);
                 $id = $this->edit_config($config);
 
                 $this->rc->output->command('plugin.save-config-complete', array(
-                        'success' => ($id !== false), 'id' => $id, 'name' => Q($config['name'])));
+                        'success' => ($id !== false), 'id' => $id, 'name' => Q($config['name']), 'new' => $new));
 
             break;
 
