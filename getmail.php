@@ -188,4 +188,3 @@ class getmail extends rcube_plugin
         return $this->driver;
     }
 }
-?>
