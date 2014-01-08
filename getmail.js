@@ -75,14 +75,20 @@ var getmail_config =
         var data = {
             cmd: 'save',
             id: rcmail.env.active_config,
-            data: $('#configform').serialize()
+            data: {
+                name: $("#config-name").val(),
+                type: $("#config-type").val(),
+                active: $("#config-active").prop("checked"),
+                server: $("#config-server").val(),
+                port: $("#config-port").val(),
+                ssl: $("#config-ssl").prop("checked"),
+                user: $("#config-user").val(),
+                pass: $("#config-pass").val(),
+                delete: $("#config-delete").prop("checked"),
+                only_new: $("#config-only_new").prop("checked"),
+                poll: $("#config-poll").val()
+            }
         };
-
-        $("#configform [type=\"checkbox\"]").forEach(function(name, value){
-
-            // TBC !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        });
 
         rcmail.addEventListener('plugin.save-config-complete', $.proxy(function(p) {
 

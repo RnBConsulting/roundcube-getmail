@@ -9,6 +9,7 @@ $labels['confignotfound'] = 'Getmail config not found!';
 $labels['saveingdata'] = 'Saving data ...';
 $labels['configform'] = 'Getmail Config';
 $labels['configdeleteconfirm'] = 'Do you really want to delete this Getmail config?';
+$labels['successfullydeleted'] = 'The Getmail configuration was successfully removed';
 
 $labels['configgeneral'] = 'General';
 $labels['configactive'] = 'Enabled';

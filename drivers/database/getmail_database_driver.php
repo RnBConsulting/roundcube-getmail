@@ -64,7 +64,7 @@ class getmail_database_driver extends getmail_driver
             $this->configs = array();
             while ($result && ($arr = $this->rc->db->fetch_assoc($result))) {
 
-                array_push($this->configs, array(
+                $this->configs[$arr['id']] = array(
                     'id' => $arr['id'],
                     'user_id' => $arr['user_id'],
                     'name' => $arr['name'],
@@ -78,7 +78,7 @@ class getmail_database_driver extends getmail_driver
                     'delete' => (bool)$arr['delete'],
                     'only_new' => (bool)$arr['only_new'],
                     'poll' => intval($arr['poll'])
-                ));
+                );
             }
         }
 
@@ -97,7 +97,6 @@ class getmail_database_driver extends getmail_driver
 
     function edit_config($config)
     {
-rcmail::console($config);
         if(!isset($config['id']))
             $config['id'] = uniqid();
 
@@ -112,7 +111,7 @@ rcmail::console($config);
                 array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
             }
         }
-rcmail::console($sql_set);
+
         $query = $this->rc->db->query(sprintf(
             "INSERT INTO ".$this->db_getmail_configs." ".
             "SET %s ".

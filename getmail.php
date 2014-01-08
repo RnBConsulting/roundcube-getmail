@@ -118,22 +118,39 @@ class getmail extends rcube_plugin
         switch ($cmd) {
             case 'save':
                 $config = $driver->get_config($id);
-                $data = $this->_unserialize(get_input_value('data', RCUBE_INPUT_GPC));
+                $data = get_input_value('data', RCUBE_INPUT_GPC);
 
-                // Create or edit.
-                $new = ($config == null);
-                $config = ($config ? $data + $config : $data);
-                $id = $driver->edit_config($config);
+                if(!$this->check_form_data($data))
+                    $this->rc->output->show_message($this->gettext('formincomplete'), 'warning');
 
-                $this->rc->output->command('plugin.save-config-complete', array(
-                        'success' => ($id !== false), 'id' => $id, 'name' => Q($config['name']), 'new' => $new));
+                else
+                {
+                    // Create or edit.
+                    $new = ($config == null);
+                    $config = ($config ? $data + $config : $data);
+                    $id = $driver->edit_config($config);
+                    $err = ($id === false);
+
+                    $this->rc->output->command('plugin.save-config-complete', array(
+                            'success' => !$err, 'id' => $id, 'name' => Q($config['name']), 'new' => $new));
+
+                    if ($err)
+                        $this->rc->output->show_message($this->gettext('savingerror'), 'error');
+                    else
+                        $this->rc->output->show_message($this->gettext('successfullysaved'), 'confirmation');
+                }
 
             break;
 
             case 'delete':
-                $success = $driver->delete_config($id);
+                $err = !$driver->delete_config($id);
                 $this->rc->output->command('plugin.delete-config-complete', array(
-                    'success' => $success, 'id' => $id));
+                    'success' => $err, 'id' => $id));
+
+                if($err)
+                    $this->rc->output->show_message($this->gettext('savingerror'), 'error');
+                else
+                    $this->rc->output->show_message($this->gettext('successfullydeleted'), 'confirmation');
                 break;
         }
 
@@ -141,16 +158,18 @@ class getmail extends rcube_plugin
     }
 
     /**
-     * Unserializes serialized form data.
+     * Checks validity of given form data.
+     *
+     * @param $data array Hash array with form data to validate.
+     * @return bool Returns true if valid, false otherwise.
      */
-    private function _unserialize($data)
+    public function check_form_data($data)
     {
-        $unserialized = array();
-        parse_str($data, $unserialized);
-        return $unserialized;
+        return isset($data['name']) && strlen($data['name']) > 0;
     }
 
-     /**
+
+    /**
      * Helper method to get the backend driver according to local config
      */
     public function get_driver()
