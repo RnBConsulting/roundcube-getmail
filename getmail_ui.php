@@ -43,8 +43,7 @@ class getmail_ui
     public function config_list($attrib = array())
     {
         $attrib += array('id' => 'config-list');
-
-        $configs = $this->plugin->get_configs();
+        $configs = $this->plugin->get_driver()->get_configs();
         $table   = new html_table();
 
         foreach ($configs as $id => $config) {
@@ -76,6 +75,11 @@ class getmail_ui
         $table->add('title', html::label($field_id, $this->plugin->gettext('configtype')));
         $table->add(null, $select->show($this->config ? $this->config['type'] : 'IMAP')); // Default
 
+        $field_id = 'config-active';
+        $input = new html_checkbox(array('name' => 'active', 'id' => $field_id, 'value' => true));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configactive')));
+        $table->add(null, $input->show($this->config ? $this->config['active'] : true));
+
         array_push($html,
             html::tag('fieldset', null,
                 html::tag('legend', 'main', $this->plugin->gettext('configgeneral')).
@@ -83,15 +87,20 @@ class getmail_ui
 
         $table = new html_table(array('cols' => 2));
 
-        $field_id = 'config-host';
-        $input = new html_inputfield(array('name' => 'host', 'id' => $field_id, 'size' => 40));
+        $field_id = 'config-server';
+        $input = new html_inputfield(array('name' => 'server', 'id' => $field_id, 'size' => 40));
         $table->add('title', html::label($field_id, $this->plugin->gettext('confighost')));
-        $table->add(null, $input->show($this->config ? $this->config['host'] : null));
+        $table->add(null, $input->show($this->config ? $this->config['server'] : null));
 
         $field_id = 'config-port';
         $input = new html_inputfield(array('name' => 'port', 'id' => $field_id, 'size' => 40));
         $table->add('title', html::label($field_id, $this->plugin->gettext('configport')));
         $table->add(null, $input->show($this->config ? $this->config['port'] : null));
+
+        $field_id = 'config-ssl';
+        $input = new html_checkbox(array('name' => 'ssl', 'id' => $field_id, 'value' => true));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configssl')));
+        $table->add(null, $input->show($this->config ? $this->config['ssl'] : true));
 
         array_push($html,
             html::tag('fieldset', null,
@@ -100,19 +109,41 @@ class getmail_ui
 
         $table = new html_table(array('cols' => 2));
 
-        $field_id = 'config-username';
-        $input = new html_inputfield(array('name' => 'username', 'id' => $field_id, 'size' => 40));
-        $table->add('title', html::label($field_id, $this->plugin->gettext('configusername')));
-        $table->add(null, $input->show($this->config ? $this->config['username'] : null));
+        $field_id = 'config-user';
+        $input = new html_inputfield(array('name' => 'user', 'id' => $field_id, 'size' => 40));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configuser')));
+        $table->add(null, $input->show($this->config ? $this->config['user'] : null));
 
-        $field_id = 'config-password';
-        $input = new html_passwordfield(array('name' => 'password', 'id' => $field_id, 'size' => 40));
-        $table->add('title', html::label($field_id, $this->plugin->gettext('configpassword')));
-        $table->add(null, $input->show($this->config ? $this->config['password'] : null));
+        $field_id = 'config-pass';
+        $input = new html_passwordfield(array('name' => 'pass', 'id' => $field_id, 'size' => 40));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configpass')));
+        $table->add(null, $input->show($this->config ? $this->config['pass'] : null));
 
         array_push($html,
             html::tag('fieldset', null,
                 html::tag('legend', 'main', $this->plugin->gettext('configauth')).
+                $table->show($attrib)));
+
+        $table = new html_table(array('cols' => 2));
+
+        $field_id = 'config-delete';
+        $input = new html_checkbox(array('name' => 'delete', 'id' => $field_id, 'value' => true));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configdelete')));
+        $table->add(null, $input->show($this->config ? $this->config['delete'] : false));
+
+        $field_id = 'config-only_new';
+        $input = new html_checkbox(array('name' => 'only_new', 'id' => $field_id, 'value' => true));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configonlynew')));
+        $table->add(null, $input->show($this->config ? $this->config['only_new'] : true));
+
+        $field_id = 'config-poll';
+        $input = new html_inputfield(array('name' => 'poll', 'id' => $field_id, 'size' => 10));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configpoll')));
+        $table->add(null, $input->show($this->config ? $this->config['poll'] : 300));
+
+        array_push($html,
+            html::tag('fieldset', null,
+                html::tag('legend', 'main', $this->plugin->gettext('configadvanced')).
                 $table->show($attrib)));
 
         return implode($html, null);

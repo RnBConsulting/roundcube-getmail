@@ -27,10 +27,12 @@ class getmail extends rcube_plugin
 {
     public $task = 'settings';
 
-    private $rc;
+    public $rc;
     private $ui;
 
-    static private $debug = true; // TODO: null;
+    public $driver = null;
+
+    static private $debug = null;
 
     /**
      * Plugin initialization.
@@ -49,9 +51,12 @@ class getmail extends rcube_plugin
         $this->add_texts('localization/', true);
         $this->include_script('getmail.js');
 
+        // load plugin configuration
+        $this->load_config();
+
         // Set debug state
         if(self::$debug === null)
-            self::$debug = $this->rc->config->get('getmail_debug', False);
+            self::$debug = $this->rc->config->get('getmail_debug', false);
     }
 
     /**
@@ -87,9 +92,9 @@ class getmail extends rcube_plugin
         $this->register_handler('plugin.configform', array($this->ui, 'config_form'));
 
         $id = get_input_value('_id', RCUBE_INPUT_GPC);
-        $configs = $this->get_configs();
+        $config = $this->get_driver()->get_config($id);
 
-        if ($id && $config = $configs[$id])
+        if ($config)
         {
             $this->ui->config = $config;
             $this->ui->config['_id'] = $id;
@@ -108,16 +113,17 @@ class getmail extends rcube_plugin
     {
         $cmd  = get_input_value('cmd', RCUBE_INPUT_GPC);
         $id = get_input_value('id', RCUBE_INPUT_GPC);
+        $driver = $this->get_driver();
 
         switch ($cmd) {
             case 'save':
-                $config = $this->get_config($id);
+                $config = $driver->get_config($id);
                 $data = $this->_unserialize(get_input_value('data', RCUBE_INPUT_GPC));
 
                 // Create or edit.
                 $new = ($config == null);
                 $config = ($config ? $data + $config : $data);
-                $id = $this->edit_config($config);
+                $id = $driver->edit_config($config);
 
                 $this->rc->output->command('plugin.save-config-complete', array(
                         'success' => ($id !== false), 'id' => $id, 'name' => Q($config['name']), 'new' => $new));
@@ -125,7 +131,7 @@ class getmail extends rcube_plugin
             break;
 
             case 'delete':
-                $success = $this->delete_config($id);
+                $success = $driver->delete_config($id);
                 $this->rc->output->command('plugin.delete-config-complete', array(
                     'success' => $success, 'id' => $id));
                 break;
@@ -144,72 +150,23 @@ class getmail extends rcube_plugin
         return $unserialized;
     }
 
-    /**
-     * Reads configured Getmail account from current user
+     /**
+     * Helper method to get the backend driver according to local config
      */
-    public function get_configs()
+    public function get_driver()
     {
-        if(!isset($_SESSION['getmail_configs']))
+        if ($this->driver == null)
         {
-            $_SESSION['getmail_configs'] = array();
+            $driver_name = $this->rc->config->get('getmail_driver', 'database');
+            $driver_class = 'getmail_' . $driver_name . '_driver';
 
-            $id = 1;
-            $_SESSION['getmail_configs'][$id] = array(
-                "id" => $id,
-                "name" => "Gmail",
-                "type" => "POP3"
-            );
+            require_once($this->home . '/drivers/getmail_driver.php');
+            require_once($this->home . '/drivers/' . $driver_name . '/' . $driver_class . '.php');
 
-            $id = 2;
-            $_SESSION['getmail_configs'][$id] = array(
-                "id" => $id,
-                "name" => "Awesome IT",
-                "type" => "IMAP"
-            );
+            $this->driver = new $driver_class($this);
         }
 
-        return $_SESSION['getmail_configs'];
-    }
-
-    public function edit_config($config)
-    {
-        $new = false;
-        if(!isset($config['id']))
-        {
-            $config['id'] = uniqid();
-            $new = true;
-        }
-        else if(!isset($_SESSION['getmail_configs'][$config['id']]))
-        {
-            // Config id is given but does not exist.
-            return false;
-        }
-
-        $_SESSION["getmail_configs"][$config['id']] = $config;
-        return $config['id'];
-    }
-
-    public function delete_config($id)
-    {
-        if(is_object($id)) $id = $id['id'];
-
-        if($id && isset($_SESSION["getmail_configs"][$id]))
-        {
-            unset($_SESSION["getmail_configs"][$id]);
-            return true;
-        }
-
-        return false;
-    }
-
-    public function get_config($id)
-    {
-        // TODO: Cache via local var.
-
-        if(isset($_SESSION["getmail_configs"][$id]))
-            return $_SESSION["getmail_configs"][$id];
-
-        return null;
+        return $this->driver;
     }
 }
 ?>

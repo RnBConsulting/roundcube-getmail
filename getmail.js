@@ -78,6 +78,12 @@ var getmail_config =
             data: $('#configform').serialize()
         };
 
+        $("#configform [type=\"checkbox\"]").forEach(function(name, value){
+
+            // TBC !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        });
+
         rcmail.addEventListener('plugin.save-config-complete', $.proxy(function(p) {
 
             if(p.new){
