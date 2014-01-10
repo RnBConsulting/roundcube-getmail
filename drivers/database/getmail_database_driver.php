@@ -106,10 +106,15 @@ class getmail_database_driver extends getmail_driver
             array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
 
         // Optional
-        foreach(array('active', 'ssl', 'delete', 'only_new', 'poll') as $col) {
+        foreach(array('poll') as $col) {
             if(isset($config[$col])){
                 array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
             }
+        }
+
+        // Boolean
+        foreach(array('active', 'ssl', 'delete', 'only_new') as $col) {
+            array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$config[$col]);
         }
 
         $query = $this->rc->db->query(sprintf(
