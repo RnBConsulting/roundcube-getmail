@@ -22,9 +22,17 @@
  */
 class getmail_cron {
 
-    public function __construct()
-    {
+    private $rc;
+    private $plugin;
 
+    public function __construct($rcmail, $root_path)
+    {
+        $this->rc = $rcmail;
+
+        $this->plugin = new getmail(rcube_plugin_api::get_instance());
+        $this->plugin->init();
+
+        $this->driver = $this->plugin->get_driver();
     }
 
     public function run($argv)
