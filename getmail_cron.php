@@ -37,7 +37,57 @@ class getmail_cron {
 
     public function run($argv)
     {
-        var_dump($argv);
+        $configs = $this->driver->get_configs();
+        foreach($configs as $config)
+        {
+            $getmail_config = $this->_generate_getmail_config($config);
+
+            if(!$this->_run_getmail($getmail_config)) {
+                // TODO: Log error, tolerate.
+            }
+
+            // TODO: Log success.
+        }
+
+        // TODO: Log success.
         return 0;
+    }
+
+    private function _generate_getmail_config($config)
+    {
+        $getmail_config = null;
+
+        $getmail_config .= $this->_get_receivers($config);
+        $getmail_config .= $this->_get_destination();
+        $getmail_config .= $this->_get_options();
+
+        return $getmail_config;
+    }
+
+    private function _get_receivers($config)
+    {
+        $receiver = null;
+        // TODO
+        return $receiver;
+    }
+
+    private function _get_destination()
+    {
+        $destination = null;
+        // TODO
+        return $destination;
+    }
+
+    private function _get_options()
+    {
+        $options = null;
+        // TODO
+        return $options;
+    }
+
+    private function _run_getmail($getmail_config)
+    {
+        // TODO
+        return true;
     }
 }
