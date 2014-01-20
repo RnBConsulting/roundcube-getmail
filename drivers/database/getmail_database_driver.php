@@ -95,7 +95,7 @@ class getmail_database_driver extends getmail_driver
         else return null;
     }
 
-    function edit_config($config)
+    public function edit_config($config)
     {
         if(!isset($config['id']))
             $config['id'] = uniqid();
@@ -129,7 +129,7 @@ class getmail_database_driver extends getmail_driver
     }
 
 
-    function delete_config($id)
+    public function delete_config($id)
     {
         $query = $this->rc->db->query(
             "DELETE FROM " . $this->db_getmail_configs." ".
