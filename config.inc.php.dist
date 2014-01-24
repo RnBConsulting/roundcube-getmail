@@ -1,6 +1,6 @@
 <?php
 $config['getmail_driver'] = "database";
-$config['getmail_debug'] = true;
+$config['getmail_debug'] = false;
 $config['getmail_command'] = "/usr/bin/getmail";
 $config['getmail_tmp_dir'] = "/tmp";
 $config['getmail_dir'] = "/tmp/.getmail";
