@@ -43,6 +43,7 @@ class getmail_cron {
             $getmail_config = $this->_generate_getmail_config($config);
 
             if(!$this->_run_getmail($getmail_config)) {
+                rcmail::write_log("errors",  "Running getmail failed for user \"".$config["username"]."\".");
                 // TODO: Log error, tolerate.
             }
 
