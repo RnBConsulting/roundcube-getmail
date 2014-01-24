@@ -26,6 +26,7 @@ class getmail_cron {
     private $plugin;
 
     private $users = array();
+    private $lock_file = null;
 
     public function __construct($rcmail, $root_path)
     {
@@ -35,14 +36,23 @@ class getmail_cron {
         $this->plugin->init();
 
         $this->driver = $this->plugin->get_driver();
+        $this->lock_file = $this->rc->config->get("getmail_lock_file");
     }
 
     public function run($argv)
     {
+        if($this->is_locked())
+        {
+            getmail::debug_log("Another Getmail is still running, exit.");
+            return 0;
+        }
+
         $configs = $this->driver->get_configs();
         foreach($configs as $config)
         {
-            if($config["active"])
+            $now = new DateTime();
+
+            if($config["active"] && ($now->getTimestamp() - $config["last_poll"]->getTimestamp()) > $config["poll"])
             {
                 getmail::debug_log("Preparing getmail \"".$config["name"]."\" (".$config["id"].") ...");
                 $getmail_config = $this->_generate_getmail_config($config);
@@ -64,11 +74,40 @@ class getmail_cron {
                     }
                 }
 
+                // Update last_poll.
+                $config["last_poll"] = new DateTime();
+                $this->driver->edit_config($config);
+
                 getmail::debug_log("Getmail \"".$config["name"]."\" (".$config["id"].") finished successfully.");
             }
         }
 
         return 0;
+    }
+
+    /**
+     * If lock file exists, check if stale.  If exists and is not stale, return true
+     * otherwise create lock file and return false.
+     */
+    private function is_locked()
+    {
+        if (file_exists($this->lock_file)) {
+            # check if it's stale
+            $locked_pid = trim(file_get_contents($this->lock_file));
+
+            # Get all active PIDs.
+            $pids = explode("\n", trim(`ps -e | awk '{print $1}'`));
+
+            # If PID is still active, return true
+            if (in_array($locked_pid, $pids))
+                return true;
+
+            # Lock-file is stale, so kill it. Then move on to re-creating it.
+            unlink($this->lock_file);
+        }
+
+        file_put_contents($this->lock_file, getmypid() . "\n");
+        return false;
     }
 
     private function _generate_getmail_config($config)

@@ -78,7 +78,8 @@ class getmail_database_driver extends getmail_driver
                     'pass' => $this->rc->decrypt($arr['pass']),
                     'delete' => (bool)$arr['delete'],
                     'only_new' => (bool)$arr['only_new'],
-                    'poll' => intval($arr['poll'])
+                    'poll' => intval($arr['poll']),
+                    'last_poll' => ($arr['last_poll'] ? new DateTime($arr['last_poll']) : null)
                 );
             }
         }
@@ -104,13 +105,20 @@ class getmail_database_driver extends getmail_driver
         // Encrypt password.
         $config['pass'] = $this->rc->encrypt($config['pass']);
 
+        // Convert DateTime object to MySQL datetime string.
+        if($config['last_poll'])
+            $config['last_poll'] = $config['last_poll']->format("Y-m-d H:i:s");
+
         $sql_set = array();
-        array_push($sql_set, $this->rc->db->quote_identifier('user_id').'='.$this->rc->db->quote($this->rc->user->ID));
-        foreach(array('id', 'name', 'type', 'server', 'user', 'pass') as $col)
+
+        if(!isset($config["user_id"]))
+            $config["user_id"] = $this->rc->db->quote($this->rc->user->ID);
+
+        foreach(array('id', 'user_id', 'name', 'type', 'server', 'user', 'pass') as $col)
             array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
 
         // Optional
-        foreach(array('poll', 'port', 'mailboxes') as $col) {
+        foreach(array('poll', 'port', 'mailboxes', 'last_poll') as $col) {
             if(isset($config[$col]) && $config[$col] != null){
                 array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
             } else {
@@ -120,13 +128,18 @@ class getmail_database_driver extends getmail_driver
 
         // Boolean
         foreach(array('active', 'ssl', 'delete', 'only_new') as $col) {
-            array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$config[$col]);
+            array_push($sql_set, $this->rc->db->quote_identifier($col).'='.($config[$col] ? 'TRUE' : 'FALSE'));
         }
 
         $query = $this->rc->db->query(sprintf(
             "INSERT INTO ".$this->db_getmail_configs." ".
             "SET %s ".
             "ON DUPLICATE KEY UPDATE %s ", join(', ', $sql_set), join(', ', $sql_set)));
+
+        if(!$query) {
+            $this->rc->db->handle_error($query);
+            return false;
+        }
 
         if($this->rc->db->affected_rows($query) > 0)
             return $config['id'];

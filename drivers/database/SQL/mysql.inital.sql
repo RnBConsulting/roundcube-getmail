@@ -13,6 +13,6 @@ CREATE TABLE IF NOT EXISTS `getmail` (
   `delete` int(1) unsigned NOT NULL DEFAULT '0',
   `only_new` int(1) unsigned NOT NULL DEFAULT '1',
   `poll` int(10) unsigned NOT NULL DEFAULT '300',
-  `lastpoll` datetime NOT NULL,
+  `last_poll` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

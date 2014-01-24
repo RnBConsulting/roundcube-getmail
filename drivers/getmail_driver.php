@@ -36,10 +36,11 @@
   *          'port' => 'Port of receiving server',
   *           'ssl' => 'Boolean value indicating whether retriever server supports SSL. Default: True.',
   *          'user' => 'Username of receiving server',
-  *          'pass' => 'Password of receiving server',
+  *          'pass' => 'Decrypted password of receiving server',
   *        'delete' => 'Boolean, if set, Getmail will delete messages after retrieving and successfully delivering them. Default: False.',
   *      'only_new' => 'Boolean, if set, Getmail retrieves only new messages, otherwise all messages are retried. Default: True.',
   *          'poll' => 'Polling interval in seconds. Default: 300s.'
+  *     'last_poll' => 'Date time object from last poll'
   *  );
   */
 
