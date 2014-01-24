@@ -69,6 +69,14 @@ class getmail extends rcube_plugin
     }
 
     /**
+     * Helper method to log errors.
+     */
+    static public function error_log($msg)
+    {
+        return rcmail::write_log("errors",  $msg);
+    }
+
+    /**
      * Render main view
      */
     public function view()
