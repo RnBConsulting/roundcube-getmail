@@ -11,6 +11,7 @@ define('INSTALL_PATH', $rcmail_path."/");
 // Include environment
 require_once $rcmail_path.'/program/include/iniset.php';
 require_once $rcmail_path.'/program/lib/Roundcube/rcube_plugin_api.php';
+require_once $rcmail_path.'/program/lib/Roundcube/rcube_user.php';
 require_once $rcmail_path.'/plugins/getmail/getmail.php';
 require_once $rcmail_path.'/plugins/getmail/getmail_cron.php';
 require_once $rcmail_path.'/plugins/getmail/drivers/getmail_driver.php';
