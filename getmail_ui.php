@@ -68,13 +68,6 @@ class getmail_ui
         $table->add('title', html::label($field_id, $this->plugin->gettext('configname')));
         $table->add(null, $input->show($this->config ? $this->config['name'] : null));
 
-        $field_id = 'config-type';
-        $select = new html_select(array('name' => 'type', 'id' => $field_id));
-        $select->add('IMAP', 'SimpleIMAPRetriever');
-        $select->add('POP3', 'SimplePOP3Retriever');
-        $table->add('title', html::label($field_id, $this->plugin->gettext('configtype')));
-        $table->add(null, $select->show($this->config ? $this->config['type'] : 'IMAP')); // Default
-
         $field_id = 'config-active';
         $input = new html_checkbox(array('name' => 'active', 'id' => $field_id, 'value' => true));
         $table->add('title', html::label($field_id, $this->plugin->gettext('configactive')));
@@ -87,6 +80,17 @@ class getmail_ui
 
         $table = new html_table(array('cols' => 2));
 
+        $field_id = 'config-type';
+        $select = new html_select(array('name' => 'type', 'id' => $field_id));
+        $select->add(array('IMAP', 'POP3'));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configtype')));
+        $table->add(null, $select->show($this->config ? $this->config['type'] : 'IMAP')); // Default
+
+        $field_id = 'config-ssl';
+        $input = new html_checkbox(array('name' => 'ssl', 'id' => $field_id, 'value' => true));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configssl')));
+        $table->add(null, $input->show($this->config ? $this->config['ssl'] : true));
+
         $field_id = 'config-server';
         $input = new html_inputfield(array('name' => 'server', 'id' => $field_id, 'size' => 40));
         $table->add('title', html::label($field_id, $this->plugin->gettext('confighost')));
@@ -96,11 +100,6 @@ class getmail_ui
         $input = new html_inputfield(array('name' => 'port', 'id' => $field_id, 'size' => 40));
         $table->add('title', html::label($field_id, $this->plugin->gettext('configport')));
         $table->add(null, $input->show($this->config ? $this->config['port'] : null));
-
-        $field_id = 'config-ssl';
-        $input = new html_checkbox(array('name' => 'ssl', 'id' => $field_id, 'value' => true));
-        $table->add('title', html::label($field_id, $this->plugin->gettext('configssl')));
-        $table->add(null, $input->show($this->config ? $this->config['ssl'] : true));
 
         array_push($html,
             html::tag('fieldset', null,
