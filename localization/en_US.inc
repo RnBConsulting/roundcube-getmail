@@ -14,8 +14,8 @@ $labels['successfullydeleted'] = 'The Getmail configuration was successfully rem
 $labels['configgeneral'] = 'General';
 $labels['configactive'] = 'Enabled';
 $labels['configname'] = 'Name';
-$labels['configtype'] = 'Type';
 
+$labels['configtype'] = 'Type';
 $labels['configserver'] = 'Server';
 $labels['confighost'] = 'Hostname';
 $labels['configport'] = 'Port';
@@ -26,6 +26,7 @@ $labels['configuser'] = "Username";
 $labels['configpass'] = "Password";
 
 $labels['configadvanced'] = 'Advanced';
+$labels['configmailboxes'] = 'Mailboxes';
 $labels['configdelete'] = 'Delete mails on success';
 $labels['configonlynew'] = 'Retrieve only new mails';
 $labels['configpoll'] = 'Poll interval (s)';

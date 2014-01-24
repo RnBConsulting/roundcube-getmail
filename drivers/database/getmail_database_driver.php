@@ -71,10 +71,11 @@ class getmail_database_driver extends getmail_driver
                     'active' => (bool)$arr['active'],
                     'type' => $arr['type'],
                     'server' => $arr['server'],
-                    'port' => intval($arr['port']),
+                    'mailboxes' => ($arr['mailboxes'] ? $arr['mailboxes'] : null),
+                    'port' => ($arr['port'] ? intval($arr['port']) : null),
                     'ssl' => (bool)$arr['ssl'],
                     'user' => $arr['user'],
-                    'pass' => $arr['pass'], // TODO: Decrypt password.
+                    'pass' => $this->rc->decrypt($arr['pass']),
                     'delete' => (bool)$arr['delete'],
                     'only_new' => (bool)$arr['only_new'],
                     'poll' => intval($arr['poll'])
@@ -100,15 +101,20 @@ class getmail_database_driver extends getmail_driver
         if(!isset($config['id']))
             $config['id'] = uniqid();
 
+        // Encrypt password.
+        $config['pass'] = $this->rc->encrypt($config['pass']);
+
         $sql_set = array();
         array_push($sql_set, $this->rc->db->quote_identifier('user_id').'='.$this->rc->db->quote($this->rc->user->ID));
-        foreach(array('id', 'name', 'type', 'server', 'port', 'user', 'pass') as $col) // TODO: Encrypt password.
+        foreach(array('id', 'name', 'type', 'server', 'user', 'pass') as $col)
             array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
 
         // Optional
-        foreach(array('poll') as $col) {
-            if(isset($config[$col])){
+        foreach(array('poll', 'port', 'mailboxes') as $col) {
+            if(isset($config[$col]) && $config[$col] != null){
                 array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
+            } else {
+                array_push($sql_set, $this->rc->db->quote_identifier($col).'= DEFAULT');
             }
         }
 
