@@ -86,7 +86,8 @@ var getmail_config =
                 pass: $("#config-pass").val(),
                 delete: $("#config-delete").prop("checked"),
                 only_new: $("#config-only_new").prop("checked"),
-                poll: $("#config-poll").val()
+                poll: $("#config-poll").val(),
+                mailboxes: $("#config-mailboxes").val()
             }
         };
 

@@ -125,6 +125,11 @@ class getmail_ui
 
         $table = new html_table(array('cols' => 2));
 
+        $field_id = 'config-mailboxes';
+        $input = new html_inputfield(array('name' => 'mailboxes', 'id' => $field_id, 'size' => 40));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configmailboxes')));
+        $table->add(null, $input->show($this->config ? $this->config['mailboxes'] : null));
+
         $field_id = 'config-delete';
         $input = new html_checkbox(array('name' => 'delete', 'id' => $field_id, 'value' => true));
         $table->add('title', html::label($field_id, $this->plugin->gettext('configdelete')));
