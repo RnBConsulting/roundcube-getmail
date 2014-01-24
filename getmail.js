@@ -51,6 +51,38 @@ var getmail_config =
             }, this));
             this.configlist.init();
         }
+
+        $("#config-type").on("change", this.update_service_port);
+        $("#config-ssl").on("change", this.update_service_port);
+
+        // Only show mailboxes for IMAP types.
+        $("#config-type").on("change", this.update_mailboxes);
+        this.update_mailboxes();
+    },
+
+    update_mailboxes: function()
+    {
+        var imap = $("#config-type option:selected").val().search(/imap/i) >= 0;
+        var $mailboxes = $("#config-mailboxes").closest("tr");
+
+        if(imap) $mailboxes.show();
+        else $mailboxes.hide();
+    },
+
+    update_service_port: function(type, ssl)
+    {
+        var $port = $("#config-port");
+        var ssl = $("#config-ssl").is(":checked");
+        var type = $("#config-type option:selected").val();
+
+        if(type.search(/pop3/i) >= 0) {
+            if(!ssl) $port.val(110);
+            else $port.val(995);
+        }
+        else if(type.search(/imap/i) >= 0) {
+            if(!ssl) $port.val(143);
+            else $port.val(993);
+        }
     },
 
     select_config: function(id)
