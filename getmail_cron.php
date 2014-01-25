@@ -82,6 +82,8 @@ class getmail_cron {
             }
         }
 
+        unlink($this->lock_file);
+
         return 0;
     }
 
