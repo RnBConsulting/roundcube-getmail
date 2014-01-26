@@ -126,7 +126,7 @@ class getmail extends rcube_plugin
         switch ($cmd) {
             case 'save':
                 $config = $driver->get_config($id);
-                $data = get_input_value('data', RCUBE_INPUT_GPC);
+                $data = $this->fix_form_data(get_input_value('data', RCUBE_INPUT_GPC));
 
                 if(!$this->check_form_data($data))
                     $this->rc->output->show_message($this->gettext('formincomplete'), 'warning');
@@ -163,6 +163,21 @@ class getmail extends rcube_plugin
         }
 
         $this->rc->output->send();
+    }
+
+    /**
+     * Fixes form data e.g. boolean that have falsely converted to strings.
+     *
+     * @param $data array Hash array with form data to validate.
+     * @return array Hash array with fixed form data.
+     */
+    public function fix_form_data($data)
+    {
+        foreach(array("active", "ssl", "delete", "read_all") as $key) {
+            $data[$key] = (strtolower($data[$key]) == "true");
+        }
+
+        return $data;
     }
 
     /**
