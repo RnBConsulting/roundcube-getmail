@@ -248,7 +248,7 @@ class getmail_cron {
         $output = array();
         $return = null;
 
-        exec("$cmd --getmaildir=\"$getmail_dir\" --rcfile=\"$rc_path\" -vvv", $output, $return);
+        exec("$cmd --getmaildir=\"$getmail_dir\" --rcfile=\"$rc_path\" 2>&1", $output, $return);
         getmail::debug_log(implode("\n", $output));
 
         unlink($rc_path);
