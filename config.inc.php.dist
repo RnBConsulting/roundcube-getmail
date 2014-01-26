@@ -68,7 +68,7 @@ $config['getmail_destination'] = array(
  */
 
 $config['getmail_options'] = array(
-    "verbose" => $config['getmail_debug'],
+    "verbose" => ($config['getmail_debug'] ? 1 : 0),
     "read_all" => null,
     "delete" => null,
     "delete_after" => null,
