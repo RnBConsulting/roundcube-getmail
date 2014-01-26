@@ -77,7 +77,7 @@ class getmail_database_driver extends getmail_driver
                     'user' => $arr['user'],
                     'pass' => $this->rc->decrypt($arr['pass']),
                     'delete' => (bool)$arr['delete'],
-                    'only_new' => (bool)$arr['only_new'],
+                    'read_all' => (bool)$arr['read_all'],
                     'poll' => intval($arr['poll']),
                     'last_poll' => ($arr['last_poll'] ? new DateTime($arr['last_poll']) : null)
                 );
@@ -127,7 +127,7 @@ class getmail_database_driver extends getmail_driver
         }
 
         // Boolean
-        foreach(array('active', 'ssl', 'delete', 'only_new') as $col) {
+        foreach(array('active', 'ssl', 'delete', 'read_all') as $col) {
             array_push($sql_set, $this->rc->db->quote_identifier($col).'='.($config[$col] ? 'TRUE' : 'FALSE'));
         }
 

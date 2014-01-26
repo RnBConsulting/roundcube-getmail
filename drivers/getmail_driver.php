@@ -38,7 +38,7 @@
   *          'user' => 'Username of receiving server',
   *          'pass' => 'Decrypted password of receiving server',
   *        'delete' => 'Boolean, if set, Getmail will delete messages after retrieving and successfully delivering them. Default: False.',
-  *      'only_new' => 'Boolean, if set, Getmail retrieves only new messages, otherwise all messages are retried. Default: True.',
+  *      'read_all' => 'Boolean, if set, Getmail retrieves all messages. If unsert Getmail only retrieves messages it has not seen before. Default: True.',
   *          'poll' => 'Polling interval in seconds. Default: 300s.'
   *     'last_poll' => 'Date time object from last poll'
   *  );
