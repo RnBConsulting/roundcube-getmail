@@ -188,9 +188,9 @@ class getmail extends rcube_plugin
      */
     public function check_form_data($data)
     {
-        return isset($data['name']) && strlen($data['name']) > 0;
+        return isset($data['name']) && strlen($data['name']) > 0 &&
+               isset($data['server']) && strlen($data['server']) > 0;
     }
-
 
     /**
      * Helper method to get the backend driver according to local config
