@@ -174,7 +174,7 @@ class getmail_cron {
 
         foreach($rc_config as $key => $value)
         {
-            $value = $this->_prepare_args($config, $value);
+            $value = $this->_prepare_args($value, $config);
 
             if(is_array($value)) {
                 $destination .= "$key = (\"".implode("\",\"",$value)."\",)\n";
@@ -205,11 +205,11 @@ class getmail_cron {
 
         foreach($rc_config as $key => $value)
         {
-            $value = $this->_prepare_args($config, $value);
+            $value = $this->_prepare_args($value, $config);
 
             // Non-null rc_config value overwrites user config.
-            if(isset($config[$key]) && $value !== null)
-                $value = $config[$key];
+            if(isset($config[$key]) && $value === null)
+                $value = $this->_prepare_args($config[$key], $config);
 
             if($value !== null)
                 $options .= "$key = $value\n";
@@ -255,13 +255,13 @@ class getmail_cron {
         return ($return == 0);
     }
 
-    private function _prepare_args($config, $value)
+    private function _prepare_args($value, $config)
     {
         if(is_array($value))
         {
             for($i = 0; $i < sizeof($value); $i ++)
             {
-                $value[$i] = $this->_prepare_args($config, $value[$i]);
+                $value[$i] = $this->_prepare_args($value[$i], $config);
             }
         }
         else
@@ -273,8 +273,8 @@ class getmail_cron {
                 $value = str_replace("%(username)", $user->get_username(null), $value);
             }
 
-            if($value === false) $value = "0";
-            elseif($value === true) $value = "1";
+            if($value === false) $value = "False";
+            elseif($value === true) $value = "True";
         }
 
         return $value;
