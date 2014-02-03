@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `getmail` (
   `mailboxes` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `port` int(5) DEFAULT NULL,
   `user` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `pass` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `pass` varchar(1024) COLLATE utf8_unicode_ci NOT NULL,
   `ssl` int(1) unsigned NOT NULL DEFAULT '1',
   `delete` int(1) unsigned NOT NULL DEFAULT '0',
   `only_new` int(1) unsigned NOT NULL DEFAULT '1',
