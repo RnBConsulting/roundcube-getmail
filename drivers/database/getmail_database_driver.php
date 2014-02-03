@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 class getmail_database_driver extends getmail_driver
 {
     private $rc;
@@ -30,6 +31,9 @@ class getmail_database_driver extends getmail_driver
 
     private $configs = null;
 
+    private $crypt_key = null;
+    private $crypt = null;
+
     public function __construct($plugin)
     {
         $this->rc = $plugin->rc;
@@ -38,9 +42,14 @@ class getmail_database_driver extends getmail_driver
         // read database config
         $db = $this->rc->get_dbh();
         $this->db_getmail_configs = $this->rc->config->get('getmail_db_table', $db->table_name($this->db_getmail_configs));
+
+        // setup encryption
+        require_once $this->rc->home."/lib/encryption.php";
+        $this->crypt_key = $this->rc->config->get("getmail_crypt_key", 'BZ§MmSXW$LOGMb&i9l7/U3co!XKO#Ecp');
+        $this->crypt = new Encryption(MCRYPT_BlOWFISH, MCRYPT_MODE_CBC);
     }
 
-    function get_configs()
+    public function get_configs()
     {
         if($this->configs == null)
         {
@@ -61,6 +70,8 @@ class getmail_database_driver extends getmail_driver
                 );
             }
 
+
+
             $this->configs = array();
             while ($result && ($arr = $this->rc->db->fetch_assoc($result))) {
 
@@ -75,7 +86,7 @@ class getmail_database_driver extends getmail_driver
                     'port' => ($arr['port'] ? intval($arr['port']) : null),
                     'ssl' => (bool)$arr['ssl'],
                     'user' => $arr['user'],
-                    'pass' => $this->rc->decrypt($arr['pass']),
+                    'pass' => $this->crypt->decrypt($arr['pass'], $this->crypt_key),
                     'delete' => (bool)$arr['delete'],
                     'read_all' => (bool)$arr['read_all'],
                     'poll' => intval($arr['poll']),
@@ -103,7 +114,7 @@ class getmail_database_driver extends getmail_driver
             $config['id'] = uniqid();
 
         // Encrypt password.
-        $config['pass'] = $this->rc->encrypt($config['pass']);
+        $config['pass'] = $this->crypt->encrypt($config['pass'], $this->crypt_key);
 
         // Convert DateTime object to MySQL datetime string.
         if($config['last_poll'])

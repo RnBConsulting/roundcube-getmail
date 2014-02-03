@@ -6,6 +6,10 @@ $config['getmail_tmp_dir'] = "/tmp";
 $config['getmail_dir'] = "/tmp/.getmail";
 $config['getmail_lock_file'] = "/run/rc-getmail.lock";
 
+// Specify a custom crypt key to protect getmail passwords in database.
+// If not specified, a default key will be used.
+$config['getmail_crypt_key'] = null;
+
 /**
  * Uncomment your appropriate Getmail destination below.
  * Note that null value results in using the default.
