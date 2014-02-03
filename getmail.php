@@ -30,6 +30,7 @@ class getmail extends rcube_plugin
     public $rc;
     private $ui;
 
+    public $home;  // declare public to be used in driver classes
     public $driver = null;
 
     static private $debug = null;
