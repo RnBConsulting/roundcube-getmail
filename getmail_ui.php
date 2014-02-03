@@ -135,6 +135,7 @@ class getmail_ui
         $table->add('title', html::label($field_id, $this->plugin->gettext('configdelete')));
         $table->add(null, $input->show($this->config ? $this->config['delete'] : false));
 
+        // Note that read_all attribute is set in javascript!
         $field_id = 'config-only_new';
         $input = new html_checkbox(array('name' => 'only_new', 'id' => $field_id, 'value' => true));
         $table->add('title', html::label($field_id, $this->plugin->gettext('configonlynew')));

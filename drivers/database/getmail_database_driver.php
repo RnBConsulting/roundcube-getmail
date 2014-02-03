@@ -74,21 +74,20 @@ class getmail_database_driver extends getmail_driver
 
             $this->configs = array();
             while ($result && ($arr = $this->rc->db->fetch_assoc($result))) {
-
                 $this->configs[$arr['id']] = array(
                     'id' => $arr['id'],
                     'user_id' => $arr['user_id'],
                     'name' => $arr['name'],
-                    'active' => (bool)$arr['active'],
+                    'active' => ($arr['active'] == '1'),
                     'type' => $arr['type'],
                     'server' => $arr['server'],
                     'mailboxes' => ($arr['mailboxes'] ? $arr['mailboxes'] : null),
                     'port' => ($arr['port'] ? intval($arr['port']) : null),
-                    'ssl' => (bool)$arr['ssl'],
+                    'ssl' => ($arr['ssl'] == '1'),
                     'user' => $arr['user'],
                     'pass' => $this->crypt->decrypt(base64_decode($arr['pass']), $this->crypt_key),
-                    'delete' => (bool)$arr['delete'],
-                    'read_all' => (bool)$arr['read_all'],
+                    'delete' => ($arr['delete'] == '1'),
+                    'read_all' => ($arr['read_all'] == '1'),
                     'poll' => intval($arr['poll']),
                     'last_poll' => ($arr['last_poll'] ? new DateTime($arr['last_poll']) : null)
                 );
