@@ -86,7 +86,7 @@ class getmail_database_driver extends getmail_driver
                     'port' => ($arr['port'] ? intval($arr['port']) : null),
                     'ssl' => (bool)$arr['ssl'],
                     'user' => $arr['user'],
-                    'pass' => $this->crypt->decrypt($arr['pass'], $this->crypt_key),
+                    'pass' => $this->crypt->decrypt(base64_decode($arr['pass']), $this->crypt_key),
                     'delete' => (bool)$arr['delete'],
                     'read_all' => (bool)$arr['read_all'],
                     'poll' => intval($arr['poll']),
@@ -114,7 +114,7 @@ class getmail_database_driver extends getmail_driver
             $config['id'] = uniqid();
 
         // Encrypt password.
-        $config['pass'] = $this->crypt->encrypt($config['pass'], $this->crypt_key);
+        $config['pass'] = base64_encode($this->crypt->encrypt($config['pass'], $this->crypt_key));
 
         // Convert DateTime object to MySQL datetime string.
         if($config['last_poll'])
