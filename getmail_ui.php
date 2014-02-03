@@ -139,7 +139,7 @@ class getmail_ui
         $field_id = 'config-only_new';
         $input = new html_checkbox(array('name' => 'only_new', 'id' => $field_id, 'value' => true));
         $table->add('title', html::label($field_id, $this->plugin->gettext('configonlynew')));
-        $table->add(null, $input->show($this->config ? $this->config['only_new'] : true));
+        $table->add(null, $input->show($this->config ? !$this->config['read_all'] : false));
 
         $field_id = 'config-poll';
         $input = new html_inputfield(array('name' => 'poll', 'id' => $field_id, 'size' => 10));
