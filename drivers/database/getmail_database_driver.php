@@ -122,7 +122,7 @@ class getmail_database_driver extends getmail_driver
         $sql_set = array();
 
         if(!isset($config["user_id"]))
-            $config["user_id"] = $this->rc->db->quote($this->rc->user->ID);
+            $config["user_id"] = $this->rc->user->ID;
 
         foreach(array('id', 'user_id', 'name', 'type', 'server', 'user', 'pass') as $col)
             array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
