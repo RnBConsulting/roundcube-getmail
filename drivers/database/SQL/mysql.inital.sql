@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `getmail` (
   `pass` varchar(1024) COLLATE utf8_unicode_ci NOT NULL,
   `ssl` int(1) unsigned NOT NULL DEFAULT '1',
   `delete` int(1) unsigned NOT NULL DEFAULT '0',
-  `only_new` int(1) unsigned NOT NULL DEFAULT '1',
+  `read_all` int(1) unsigned NOT NULL DEFAULT '1',
   `poll` int(10) unsigned NOT NULL DEFAULT '300',
   `last_poll` datetime NOT NULL,
   PRIMARY KEY (`id`)
