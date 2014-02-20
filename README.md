@@ -53,7 +53,7 @@ Troubleshooting
     $config['getmail_debug'] = true;
     ```
 
-* Feel free to post issues in our tracker: https://gitlab.awesome-it.de/kolab/roundcube-getmail/issues
+* Add or search for issues here: https://gitlab.awesome-it.de/kolab/roundcube-getmail/issues
 
 License
 =======
