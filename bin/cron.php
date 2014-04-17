@@ -20,5 +20,5 @@ require_once $rcmail_path.'/plugins/getmail/drivers/getmail_driver.php';
 $rcmail = rcmail::get_instance($GLOBALS['env']);
 
 // Initialize and run cronjob
-$getmail_cron = new getmail_cron($rcmail, $rmail_path);
+$getmail_cron = new getmail_cron($rcmail);
 exit($getmail_cron->run($argv));
