@@ -5,6 +5,7 @@ $config['getmail_command'] = "/usr/bin/getmail";
 $config['getmail_tmp_dir'] = "/tmp";
 $config['getmail_dir'] = "/tmp/.getmail";
 $config['getmail_lock_file'] = "/run/rc-getmail.lock";
+$config['getmail_debug'] = false; // Enable debug log to console logfile.
 
 // Specify a custom crypt key to protect getmail passwords in database.
 // If not specified, a default key will be used.
