@@ -28,7 +28,7 @@ class getmail_cron {
     private $users = array();
     private $lock_file = null;
 
-    public function __construct($rcmail, $root_path)
+    public function __construct($rcmail)
     {
         $this->rc = $rcmail;
 
