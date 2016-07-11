@@ -1,6 +1,15 @@
 {
     "name": "roundcube/getmail",
     "type": "roundcube-plugin",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Daniel Morlock",
+            "email": "daniel.morlock@awesome-it.de",
+            "homepage": "https://gitlab.awesome-it.de/kolab/roundcube-getmail",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "min-version": "1.0.9"
     }
