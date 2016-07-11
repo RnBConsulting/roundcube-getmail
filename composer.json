@@ -1,4 +1,5 @@
 {
+    "name": "roundcube/getmail",
     "type": "roundcube-plugin",
     "require": {
         "min-version": "1.0.9"
