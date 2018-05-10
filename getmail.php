@@ -100,7 +100,7 @@ class getmail extends rcube_plugin
         $this->ui = new getmail_ui($this);
         $this->register_handler('plugin.configform', array($this->ui, 'config_form'));
 
-        $id = get_input_value('_id', RCUBE_INPUT_GPC);
+        $id = rcube_utils::get_input_value('_id', rcube_utils::INPUT_GPC);
         $config = $this->get_driver()->get_config($id);
 
         if ($config)
@@ -120,14 +120,14 @@ class getmail extends rcube_plugin
      */
     public function json_command()
     {
-        $cmd  = get_input_value('cmd', RCUBE_INPUT_GPC);
-        $id = get_input_value('id', RCUBE_INPUT_GPC);
+        $cmd  = rcube_utils::get_input_value('cmd', rcube_utils::INPUT_GPC);
+        $id = rcube_utils::get_input_value('id', rcube_utils::INPUT_GPC);
         $driver = $this->get_driver();
 
         switch ($cmd) {
             case 'save':
                 $config = $driver->get_config($id);
-                $data = $this->fix_form_data(get_input_value('data', RCUBE_INPUT_GPC));
+                $data = $this->fix_form_data(rcube_utils::get_input_value('data', rcube_utils::INPUT_GPC));
 
                 if(!$this->check_form_data($data))
                     $this->rc->output->show_message($this->gettext('formincomplete'), 'warning');
@@ -141,7 +141,7 @@ class getmail extends rcube_plugin
                     $err = ($id === false);
 
                     $this->rc->output->command('plugin.save-config-complete', array(
-                            'success' => !$err, 'id' => $id, 'name' => Q($config['name']), 'new' => $new));
+                            'success' => !$err, 'id' => $id, 'name' => rcube::Q($config['name']), 'new' => $new));
 
                     if ($err)
                         $this->rc->output->show_message($this->gettext('savingerror'), 'error');

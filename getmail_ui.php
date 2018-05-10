@@ -49,7 +49,7 @@ class getmail_ui
         foreach ($configs as $id => $config) {
             $name = $config["name"];
             $table->add_row(array('id' => 'rcmrow' . $id));
-            $table->add(null, html::span('configname', Q($name)));
+            $table->add(null, html::span('configname', rcube::Q($name)));
         }
 
         $this->rc->output->add_gui_object('configlist', $attrib['id']);
