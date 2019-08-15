@@ -11,6 +11,6 @@
         }
     ],
     "require": {
-        "min-version": "1.0.9"
+        "roundcube/plugin-installer": ">=0.1.6"
     }
 }
