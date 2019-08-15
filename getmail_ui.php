@@ -146,6 +146,12 @@ class getmail_ui
         $table->add('title', html::label($field_id, $this->plugin->gettext('configpoll')));
         $table->add(null, $input->show($this->config ? $this->config['poll'] : 300));
 
+        $field_id = 'config-header';
+        $input = new html_inputfield(array('name' => 'header', 'id' => $field_id, 'size' => 40));
+        $table->add('title', html::label($field_id, $this->plugin->gettext('configheader')));
+        $table->add(null, $input->show($this->config ? $this->config['header'] : null));
+
+
         array_push($html,
             html::tag('fieldset', null,
                 html::tag('legend', 'main', $this->plugin->gettext('configadvanced')).

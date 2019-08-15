@@ -119,7 +119,8 @@ var getmail_config =
                 delete: $("#config-delete").prop("checked"),
                 read_all: !$("#config-only_new").prop("checked"),
                 poll: $("#config-poll").val(),
-                mailboxes: $("#config-mailboxes").val()
+                mailboxes: $("#config-mailboxes").val(),
+                header: $("#config-header").val()
             }
         };
 

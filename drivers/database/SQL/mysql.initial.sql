@@ -14,5 +14,6 @@ CREATE TABLE IF NOT EXISTS `getmail` (
   `read_all` int(1) unsigned NOT NULL DEFAULT '1',
   `poll` int(10) unsigned NOT NULL DEFAULT '300',
   `last_poll` datetime NOT NULL,
+  `header` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

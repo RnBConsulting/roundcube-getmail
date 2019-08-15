@@ -131,9 +131,30 @@ class getmail_cron {
             getmail::error_log("Could not get getmail options from config, skip!");
             return false;
         }
+        $header = $this->_get_header($config);
 
-        return $retriever.$destination.$options;
+        return $retriever.$destination.$options.$header;
     }
+
+    private function _get_header($config)
+    {
+        if(!isset($config["header"]))
+          return "";
+        if($config["header"] == "")
+          return "";
+
+        $rc_config = $this->rc->config->get("getmail_destination");
+
+        $header = $config["header"];
+
+        return "[filter-account]\n".
+               ($rc_config["user"] ? "user = ".$rc_config["user"]."\n" : "").
+               ($rc_config["group"] ? "group = ".$rc_config["group"]."\n" : "").
+               "type = Filter_external"."\n".
+               ($this->rc->config->get("getmail_reformail") ? "path = ".$this->rc->config->get("getmail_reformail")."\n" : "").
+               ($config["header"] ? "arguments = ('-a".$config["header"]."', )"."\n" : "");
+    }
+
 
     private function _get_retriever($config)
     {

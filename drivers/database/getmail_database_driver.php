@@ -89,7 +89,8 @@ class getmail_database_driver extends getmail_driver
                     'delete' => ($arr['delete'] == '1'),
                     'read_all' => ($arr['read_all'] == '1'),
                     'poll' => intval($arr['poll']),
-                    'last_poll' => ($arr['last_poll'] ? new DateTime($arr['last_poll']) : null)
+                    'last_poll' => ($arr['last_poll'] ? new DateTime($arr['last_poll']) : null),
+                    'header' => ($arr['header'])
                 );
             }
         }
@@ -124,7 +125,7 @@ class getmail_database_driver extends getmail_driver
         if(!isset($config["user_id"]))
             $config["user_id"] = $this->rc->user->ID;
 
-        foreach(array('id', 'user_id', 'name', 'type', 'server', 'user', 'pass') as $col)
+        foreach(array('id', 'user_id', 'name', 'type', 'server', 'user', 'pass', 'header') as $col)
             array_push($sql_set, $this->rc->db->quote_identifier($col).'='.$this->rc->db->quote($config[$col]));
 
         // Optional

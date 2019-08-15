@@ -30,4 +30,5 @@ $labels['configmailboxes'] = 'Mailboxes';
 $labels['configdelete'] = 'Delete mails on success';
 $labels['configonlynew'] = 'Retrieve only new mails';
 $labels['configpoll'] = 'Poll interval (s)';
+$labels['configheader'] = 'Add custom message header';
 ?>
