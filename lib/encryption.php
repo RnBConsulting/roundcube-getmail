@@ -20,16 +20,6 @@
 class Encryption {
 
     /**
-     * @var string $cipher The mcrypt cipher to use for this instance
-     */
-    protected $cipher = '';
-
-    /**
-     * @var int $mode The mcrypt cipher mode to use
-     */
-    protected $mode = '';
-
-    /**
      * @var int $rounds The number of rounds to feed into PBKDF2 for key generation
      */
     protected $rounds = 100;
@@ -37,13 +27,9 @@ class Encryption {
     /**
      * Constructor!
      *
-     * @param string $cipher The MCRYPT_* cypher to use for this instance
-     * @param int    $mode   The MCRYPT_MODE_* mode to use for this instance
      * @param int    $rounds The number of PBKDF2 rounds to do on the key
      */
-    public function __construct($cipher, $mode, $rounds = 100) {
-        $this->cipher = $cipher;
-        $this->mode = $mode;
+    public function __construct($rounds = 100) {
         $this->rounds = (int) $rounds;
     }
 
@@ -67,7 +53,7 @@ class Encryption {
              return false;
         }
 
-        $dec = mcrypt_decrypt($this->cipher, $cipherKey, $enc, $this->mode, $iv);
+        $dec = openssl_decrypt($enc, "BF-CBC", $cipherKey, OPENSSL_RAW_DATA | OPENSSL_NO_PADDING | OPENSSL_DONT_ZERO_PAD_KEY, $iv);
 
         $data = $this->unpad($dec);
 
@@ -83,12 +69,13 @@ class Encryption {
      * @returns string The encrypted data
      */
     public function encrypt($data, $key) {
-        $salt = mcrypt_create_iv(128, MCRYPT_DEV_URANDOM);
+        // The length of the salt is hardcoded
+        $salt = openssl_random_pseudo_bytes(128);
         list ($cipherKey, $macKey, $iv) = $this->getKeys($salt, $key);
 
         $data = $this->pad($data);
 
-        $enc = mcrypt_encrypt($this->cipher, $cipherKey, $data, $this->mode, $iv);
+        $enc = openssl_encrypt($data, "BF-CBC", $cipherKey, OPENSSL_RAW_DATA | OPENSSL_DONT_ZERO_PAD_KEY | OPENSSL_NO_PADDING, $iv);
 
         $mac = hash_hmac('sha512', $enc, $macKey, true);
         return $salt . $enc . $mac;
@@ -103,8 +90,10 @@ class Encryption {
      * @returns array An array of keys (a cipher key, a mac key, and a IV)
      */
     protected function getKeys($salt, $key) {
-        $ivSize = mcrypt_get_iv_size($this->cipher, $this->mode);
-        $keySize = mcrypt_get_key_size($this->cipher, $this->mode);
+        $ivSize = openssl_cipher_iv_length("BF-CBC");
+        // This used to be mcrypt's key size; mcrypt returns the
+        // maximum supported length by default, so we can hardcode it here.
+        $keySize = 56;
         $length = 2 * $keySize + $ivSize;
 
         $key = $this->pbkdf2('sha512', $key, $salt, $this->rounds, $length);
@@ -145,7 +134,10 @@ class Encryption {
     }
 
     protected function pad($data) {
-        $length = mcrypt_get_block_size($this->cipher, $this->mode);
+        // This is not the same as mcrypt_get_block_size but works for
+        // virtually all cases mcrypt supports. See
+        // https://stackoverflow.com/questions/42350165/openssl-equivalent-to-mcrypt-get-block-size
+        $length = openssl_cipher_iv_length("BF-CBC");
         $padAmount = $length - strlen($data) % $length;
         if ($padAmount == 0) {
             $padAmount = $length;
@@ -154,7 +146,10 @@ class Encryption {
     }
 
     protected function unpad($data) {
-        $length = mcrypt_get_block_size($this->cipher, $this->mode);
+        // This is not the same as mcrypt_get_block_size but works for
+        // virtually all cases mcrypt supports. See
+        // https://stackoverflow.com/questions/42350165/openssl-equivalent-to-mcrypt-get-block-size
+        $length = openssl_cipher_iv_length("BF-CBC");
         $last = ord($data[strlen($data) - 1]);
         if ($last > $length) return false;
         if (substr($data, -1 * $last) !== str_repeat(chr($last), $last)) {

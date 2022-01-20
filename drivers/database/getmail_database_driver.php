@@ -46,7 +46,7 @@ class getmail_database_driver extends getmail_driver
         // setup encryption
         require_once $this->plugin->home."/lib/encryption.php";
         $this->crypt_key = $this->rc->config->get("getmail_crypt_key", 'BZ§MmSXW$LOGMb&i9l7/U3co!XKO#Ecp');
-        $this->crypt = new Encryption(MCRYPT_BlOWFISH, MCRYPT_MODE_CBC);
+        $this->crypt = new Encryption();
     }
 
     public function get_configs()
