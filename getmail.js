@@ -166,13 +166,6 @@ var getmail_config =
 
 window.rcmail && rcmail.addEventListener('init', function (evt) {
 
-    // Add button to tabs list
-    var tab = $('<span>').attr('id', 'settingstabplugingetmail').addClass('tablink'),
-        button = $('<a>').attr('href', rcmail.env.comm_path + '&_action=plugin.getmail')
-            .html(rcmail.gettext('tabtitle', 'getmail'))
-            .appendTo(tab);
-    rcmail.add_element(tab, 'tabs');
-
     if (/^plugin.getmail/.test(rcmail.env.action)) {
         getmail_config.init();
     }

@@ -49,6 +49,8 @@ class getmail extends rcube_plugin
         $this->register_action('plugin.getmail-add', array($this, 'config_view'));
         $this->register_action('plugin.getmail-json', array($this, 'json_command'));
 
+	$this->add_hook('settings_actions', array($this, 'settings_actions'));
+
         $this->add_texts('localization/', true);
         $this->include_script('getmail.js');
 
@@ -58,6 +60,16 @@ class getmail extends rcube_plugin
         // Set debug state
         if(self::$debug === null)
             self::$debug = $this->rc->config->get('getmail_debug', false);
+    }
+
+    /**
+     * Adds Getmail section in Settings
+     */
+    function settings_actions($args)
+    {
+        // register as settings action
+        $args['actions'][] = array('action' => 'plugin.getmail', 'label' => 'tabtitle', 'domain' => 'getmail');
+        return $args;
     }
 
     /**
