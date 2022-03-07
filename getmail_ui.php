@@ -82,7 +82,7 @@ class getmail_ui
 
         $field_id = 'config-type';
         $select = new html_select(array('name' => 'type', 'id' => $field_id));
-        $select->add(array('IMAP', 'POP3'));
+        $select->add(array('IMAP', 'POP3'), array('IMAP', 'POP3'));
         $table->add('title', html::label($field_id, $this->plugin->gettext('configtype')));
         $table->add(null, $select->show($this->config ? $this->config['type'] : 'IMAP')); // Default
 
